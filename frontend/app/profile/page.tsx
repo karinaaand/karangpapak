@@ -5,15 +5,15 @@ import { getProfile } from "@/services/api";
 
 export default async function ProfilePage() {
   const profile = await getProfile();
-  const villageLocation = [profile.district, profile.regency, profile.province]
+  const villageLocation = [profile?.district, profile?.regency, profile?.province]
     .filter(Boolean)
     .join(", ");
 
   const infoList = [
-    { label: "Nama Kepala Desa", value: profile.head_name ?? "Belum diperbarui", icon: User },
+    { label: "Nama Kepala Desa", value: profile?.head_name ?? "Belum diperbarui", icon: User },
     { label: "Wilayah", value: villageLocation || "Informasi wilayah belum tersedia", icon: MapPin },
-    { label: "Kode Pos", value: profile.postal_code ?? "Belum tersedia", icon: Mail },
-    { label: "Alamat Kantor Desa", value: profile.address ?? "Alamat kantor desa belum tersedia", icon: Map },
+    { label: "Kode Pos", value: profile?.postal_code ?? "Belum tersedia", icon: Mail },
+    { label: "Alamat Kantor Desa", value: profile?.address ?? "Alamat kantor desa belum tersedia", icon: Map },
   ];
 
   function getYoutubeEmbedUrl(url: string) {
@@ -22,7 +22,7 @@ export default async function ProfilePage() {
     return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1&mute=1&loop=1&playlist=${match[1]}&controls=0&showinfo=0&rel=0&modestbranding=1` : null;
   }
   
-  const embedUrl = profile.video_url ? getYoutubeEmbedUrl(profile.video_url) : null;
+  const embedUrl = profile?.video_url ? getYoutubeEmbedUrl(profile.video_url) : null;
 
   return (
     <div className="bg-[linear-gradient(180deg,#f4f8fc_0%,#eef4fc_45%,#ffffff_100%)] min-h-screen">
@@ -44,7 +44,7 @@ export default async function ProfilePage() {
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 text-center sm:px-6 sm:py-24 lg:px-8 lg:pt-32 lg:pb-48 w-full">
           <div className="mx-auto flex max-w-4xl flex-col items-center">
             <h1 className="text-2xl font-extrabold leading-[1.2] text-white sm:text-3xl md:text-4xl lg:text-[44px] md:whitespace-nowrap drop-shadow-md">
-              Profil {profile.village_name}
+              Profil {profile?.village_name ?? "Desa Karangpapak"}
             </h1>
             <p className="mt-6 mx-auto max-w-3xl text-base leading-8 text-[#d2e2f5] sm:text-lg drop-shadow">
               Mengenal lebih dekat sejarah, visi, misi, dan arah pembangunan desa dalam tampilan yang lebih rapi dan mudah dibaca.

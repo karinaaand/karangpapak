@@ -43,27 +43,27 @@ export default async function KontakPage() {
   const infoItems = [
     {
       label: "Nama Kantor",
-      value: kontak.office_name ?? "Kantor Desa Karangpapak",
+      value: kontak?.office_name ?? "Kantor Desa Karangpapak",
       Icon: Building2,
       color: "bg-[#eef4fc] text-[#2c73b9]",
     },
     {
       label: "Alamat Kantor Desa",
       value:
-        kontak.address ??
+        kontak?.address ??
         "Jl. Raya Karangpapak, Kecamatan Cisolok, Kabupaten Sukabumi, Jawa Barat 43366",
       Icon: MapPin,
       color: "bg-[#fff4dd] text-[#c8861a]",
     },
     {
       label: "Nomor Telepon Kantor",
-      value: kontak.phone ?? "(0266) 421234",
+      value: kontak?.phone ?? "(0266) 421234",
       Icon: Phone,
       color: "bg-[#eef4fc] text-[#2c73b9]",
     },
     {
       label: "Alamat Email Resmi",
-      value: kontak.email ?? "desa.karangpapak@sukabumikab.go.id",
+      value: kontak?.email ?? "desa.karangpapak@sukabumikab.go.id",
       Icon: Mail,
       color: "bg-[#eef4fc] text-[#2c73b9]",
     },
@@ -78,21 +78,21 @@ export default async function KontakPage() {
   const socialItems = [
     {
       label: "Facebook",
-      value: kontak.facebook ?? "Desa Karangpapak",
+      value: kontak?.facebook ?? "Desa Karangpapak",
       icon: <IconFacebook />,
       href: "#",
       bg: "bg-[#1877f2]",
     },
     {
       label: "Instagram",
-      value: kontak.instagram ?? "@desa.karangpapak",
+      value: kontak?.instagram ?? "@desa.karangpapak",
       icon: <IconInstagram />,
       href: "#",
       bg: "bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888]",
     },
     {
       label: "YouTube",
-      value: kontak.youtube ?? "Desa Karangpapak Official",
+      value: kontak?.youtube ?? "Desa Karangpapak Official",
       icon: <IconYoutube />,
       href: "#",
       bg: "bg-[#ff0000]",
