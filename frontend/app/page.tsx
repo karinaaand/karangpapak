@@ -13,10 +13,11 @@ export default async function HomePage() {
     getLayanan(1, 2),
   ]);
 
-  const berita = beritaResponse.data;
-  const layanan = layananResponse.data;
-  const umkmCount = umkmResponse.total;
-  const villageLocation = [profile.district, profile.regency, profile.province]
+  const berita = beritaResponse?.data ?? [];
+  const layanan = layananResponse?.data ?? [];
+  const umkmCount = umkmResponse?.total ?? 0;
+  const beritaTotal = beritaResponse?.total ?? 0;
+  const villageLocation = [profile?.district, profile?.regency, profile?.province]
     .filter(Boolean)
     .join(", ");
 
@@ -151,7 +152,7 @@ export default async function HomePage() {
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#718a9e]">
                   Total Berita Terbit
                 </p>
-                <p className="mt-2 text-2xl font-extrabold text-[#0f2d4a]">{beritaResponse.total}</p>
+                <p className="mt-2 text-2xl font-extrabold text-[#0f2d4a]">{beritaTotal}</p>
               </div>
               <Link
                 href="/berita"
