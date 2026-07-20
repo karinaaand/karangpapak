@@ -10,7 +10,9 @@ type CardBeritaProps = {
 
 function formatDate(dateStr: string | null) {
   if (!dateStr) return null;
-  return new Date(dateStr).toLocaleDateString("id-ID", {
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("id-ID", {
     day: "numeric",
     month: "long",
     year: "numeric",

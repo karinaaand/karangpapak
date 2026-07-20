@@ -103,7 +103,7 @@ export default function GaleriClientView() {
               title: item.title,
               category: "pembangunan" as const,
               categoryLabel: "Berita & Publikasi",
-              date: item.published_at
+              date: item.published_at && !isNaN(new Date(item.published_at).getTime())
                 ? new Date(item.published_at).toLocaleDateString("id-ID", {
                     day: "numeric",
                     month: "long",

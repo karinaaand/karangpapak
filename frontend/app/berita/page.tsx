@@ -17,6 +17,12 @@ export default async function BeritaPage({ searchParams }: BeritaPageProps) {
   const page = Math.max(1, Number(params.page ?? "1"));
   const res = await getBerita(page, 3);
 
+  const dataList = res?.data ?? [];
+  const total = res?.total ?? 0;
+  const currentPage = res?.current_page ?? page;
+  const lastPage = res?.last_page ?? 1;
+  const perPage = res?.per_page ?? 3;
+
   return (
     <div className="bg-[linear-gradient(180deg,#f4f8fc_0%,#eef4fc_45%,#ffffff_100%)] min-h-screen">
       <PageHeader
@@ -33,27 +39,27 @@ export default async function BeritaPage({ searchParams }: BeritaPageProps) {
                 <p className="text-xs text-[#5a6e7f] mt-0.5">Menampilkan berita resmi pembangunan dan informasi publik desa.</p>
               </div>
               <span className="rounded-full bg-[#f4f8fc] border border-[#d2dfec] px-4 py-1.5 text-xs font-bold text-[#2c73b9] self-start sm:self-auto">
-                {res.total} Berita Terbit
+                {total} Berita Terbit
               </span>
             </div>
 
-            {res.data.length === 0 ? (
+            {dataList.length === 0 ? (
               <div className="rounded-[28px] border border-dashed border-[#b8cde4] bg-[#f4f8fc] px-6 py-12 text-center text-sm leading-7 text-[#5a6e7f]">
                 Berita dan pengumuman desa belum tersedia. Area ini akan otomatis menampilkan konten setelah dipublikasikan dari dashboard admin.
               </div>
             ) : (
               <>
                 <div className="grid items-stretch gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                  {res.data.map((item) => (
+                  {dataList.map((item) => (
                     <CardBerita key={item.id} item={item} />
                   ))}
                 </div>
 
                 <Pagination
-                  currentPage={res.current_page}
-                  lastPage={res.last_page}
-                  total={res.total}
-                  perPage={res.per_page}
+                  currentPage={currentPage}
+                  lastPage={lastPage}
+                  total={total}
+                  perPage={perPage}
                   basePath="/berita"
                 />
               </>

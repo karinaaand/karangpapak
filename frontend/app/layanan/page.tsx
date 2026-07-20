@@ -13,10 +13,10 @@ export default async function LayananPage({ searchParams }: Props) {
   const page = Math.max(1, parseInt(pageStr ?? "1", 10) || 1);
   const result = await getLayanan(page, 3);
 
-  const layanan = result.data;
-  const total = result.total;
-  const lastPage = result.last_page;
-  const currentPage = result.current_page;
+  const layanan = result?.data ?? [];
+  const total = result?.total ?? 0;
+  const lastPage = result?.last_page ?? 1;
+  const currentPage = result?.current_page ?? page;
 
   return (
     <div className="bg-[linear-gradient(180deg,#f4f8fc_0%,#eef4fc_45%,#ffffff_100%)]">
