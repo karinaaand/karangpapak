@@ -1,11 +1,13 @@
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type PaginationProps = {
   currentPage: number;
   lastPage: number;
   total: number;
   perPage: number;
-  basePath: string;
+  basePath?: string;
+  onPageChange?: (page: number) => void;
 };
 
 export default function Pagination({
@@ -13,7 +15,8 @@ export default function Pagination({
   lastPage,
   total,
   perPage,
-  basePath,
+  basePath = "",
+  onPageChange,
 }: PaginationProps) {
   if (total === 0) return null;
 
@@ -38,45 +41,54 @@ export default function Pagination({
   }
 
   function href(page: number) {
+    if (!basePath) return "#";
     const separator = basePath.includes("?") ? "&" : "?";
     return `${basePath}${separator}page=${page}`;
+  }
+
+  function handleClick(e: React.MouseEvent, page: number) {
+    if (onPageChange) {
+      e.preventDefault();
+      onPageChange(page);
+    }
   }
 
   return (
     <nav
       aria-label="Navigasi halaman"
-      className="mt-10 flex flex-col gap-4 rounded-[24px] border border-[#d2dfec] bg-[#f4f8fc] px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+      className="mt-10 flex flex-col gap-4 rounded-full border border-[#e2e8f0] bg-[#f8fafc] px-6 py-3 sm:flex-row sm:items-center sm:justify-between shadow-xs"
     >
-      <p className="text-sm text-[#5a6e7f]">
-        Menampilkan{" "}
-        <span className="font-semibold text-[#0f2d4a]">
-          {from}–{to}
-        </span>{" "}
-        dari{" "}
-        <span className="font-semibold text-[#0f2d4a]">{total}</span> entri
+      <p className="text-xs sm:text-sm text-[#5a6e7f] text-center sm:text-left">
+        Menampilkan <span className="font-bold text-[#0f2d4a]">{from}–{to}</span> dari{" "}
+        <span className="font-bold text-[#0f2d4a]">{total}</span> entri
       </p>
 
-      {lastPage > 1 && (
-        <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-end">
+      {lastPage >= 1 && (
+        <div className="flex items-center justify-center gap-2">
           {currentPage > 1 ? (
             <Link
               href={href(currentPage - 1)}
-              className="flex h-9 items-center gap-1.5 rounded-full border border-[#d2dfec] bg-white px-4 text-sm font-medium text-[#2c73b9] transition hover:border-[#2c73b9] hover:bg-[#f0f7ff]"
+              onClick={(e) => handleClick(e, currentPage - 1)}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d2dfec] bg-white text-[#5a6e7f] transition hover:border-[#2c73b9] hover:text-[#2c73b9] hover:bg-white shadow-xs text-xs font-semibold"
+              aria-label="Halaman Sebelumnya"
             >
-              &lt;
+              <ChevronLeft size={16} />
             </Link>
           ) : (
-            <span className="flex h-9 items-center gap-1.5 rounded-full border border-[#d2dfec] bg-white px-4 text-sm font-medium text-[#94a3b8] cursor-not-allowed">
-              &lt;
+            <span
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e2e8f0] bg-white text-[#cbd5e1] cursor-not-allowed text-xs font-semibold"
+              aria-disabled="true"
+            >
+              <ChevronLeft size={16} />
             </span>
           )}
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             {pages.map((p, i) =>
               p === "..." ? (
                 <span
                   key={`ellipsis-${i}`}
-                  className="flex h-9 w-9 items-center justify-center text-sm text-[#94a3b8]"
+                  className="flex h-9 w-9 items-center justify-center text-xs text-[#94a3b8]"
                 >
                   ...
                 </span>
@@ -84,10 +96,11 @@ export default function Pagination({
                 <Link
                   key={p}
                   href={href(p)}
-                  className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium transition ${
+                  onClick={(e) => handleClick(e, p)}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition ${
                     p === currentPage
-                      ? "bg-[#2c73b9] text-white shadow-sm"
-                      : "border border-[#d2dfec] bg-white text-[#374151] hover:border-[#2c73b9] hover:text-[#2c73b9]"
+                      ? "bg-[#2c73b9] text-white shadow-md"
+                      : "border border-[#d2dfec] bg-white text-[#334155] hover:border-[#2c73b9] hover:text-[#2c73b9]"
                   }`}
                   aria-current={p === currentPage ? "page" : undefined}
                 >
@@ -100,13 +113,18 @@ export default function Pagination({
           {currentPage < lastPage ? (
             <Link
               href={href(currentPage + 1)}
-              className="flex h-9 items-center gap-1.5 rounded-full border border-[#d2dfec] bg-white px-4 text-sm font-medium text-[#2c73b9] transition hover:border-[#2c73b9] hover:bg-[#f0f7ff]"
+              onClick={(e) => handleClick(e, currentPage + 1)}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d2dfec] bg-white text-[#5a6e7f] transition hover:border-[#2c73b9] hover:text-[#2c73b9] hover:bg-white shadow-xs text-xs font-semibold"
+              aria-label="Halaman Selanjutnya"
             >
-              &gt;
+              <ChevronRight size={16} />
             </Link>
           ) : (
-            <span className="flex h-9 items-center gap-1.5 rounded-full border border-[#d2dfec] bg-white px-4 text-sm font-medium text-[#94a3b8] cursor-not-allowed">
-              &gt;
+            <span
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e2e8f0] bg-white text-[#cbd5e1] cursor-not-allowed text-xs font-semibold"
+              aria-disabled="true"
+            >
+              <ChevronRight size={16} />
             </span>
           )}
         </div>

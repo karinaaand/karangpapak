@@ -19,10 +19,12 @@ import {
   Milk,
   Utensils,
   Activity,
-  Heart,
   Award,
   QrCode,
+  Sprout,
+  ChevronRight,
 } from "lucide-react";
+import Link from "next/link";
 import CardEdukasi from "@/components/CardEdukasi";
 import Pagination from "@/components/Pagination";
 import { Edukasi } from "@/types/edukasi";
@@ -39,6 +41,7 @@ type EdukasiClientViewProps = {
 const CATEGORIES = [
   { id: "all", label: "Semua Topik", icon: BookOpen },
   { id: "stunting-gizi", label: "Stunting & Gizi", icon: Baby },
+  { id: "kebun-edukasi", label: "Kebun Edukasi & Tani", icon: Sprout },
   { id: "literasi-digital", label: "Literasi Digital", icon: Laptop },
   { id: "lingkungan-sehat", label: "Lingkungan Sehat", icon: TreePine },
   { id: "kesiapsiagaan", label: "Kesiapsiagaan Bencana", icon: ShieldCheck },
@@ -76,11 +79,11 @@ const TOPIC_CARDS = [
     category: "stunting-gizi",
   },
   {
-    id: "gizi-ibu-menyusui",
-    title: "Gizi Ibu Menyusui",
-    desc: "Pangan pelancar ASI, kebutuhan nutrisi, dan manfaat menyusui",
+    id: "gizi-balita-anak",
+    title: "Gizi Balita & Anak",
+    desc: "Kebutuhan nutrisi makro & mikro, porsi seimbang, dan suplemen",
     icon: Milk,
-    query: "menyusui",
+    query: "gizi",
     category: "stunting-gizi",
   },
   {
@@ -108,11 +111,11 @@ const TOPIC_CARDS = [
     category: "stunting-gizi",
   },
   {
-    id: "asi-eksklusif",
-    title: "ASI Eksklusif",
-    desc: "Manfaat, teknik, dan cara pemberian ASI yang benar",
-    icon: Heart,
-    query: "asi",
+    id: "posyandu-pemantauan",
+    title: "Posyandu & Pemantauan",
+    desc: "Jadwal posyandu, grafik KMS, dan imunisasi berkala anak",
+    icon: HeartPulse,
+    query: "posyandu",
     category: "stunting-gizi",
   },
 ];
@@ -136,7 +139,6 @@ export default function EdukasiClientView({
 
   const [showCalc, setShowCalc] = useState<boolean>(false);
 
-  // Calculator state - Default inputs start empty/0 so user can type cleanly
   const [calcGender, setCalcGender] = useState<"laki" | "perempuan">("laki");
   const [calcAgeMonth, setCalcAgeMonth] = useState<string>("");
   const [calcWeight, setCalcWeight] = useState<string>("");
@@ -148,7 +150,6 @@ export default function EdukasiClientView({
     advice: string;
   } | null>(null);
 
-  // Fetch directly from Backend API whenever category, search, or page changes
   useEffect(() => {
     let isMounted = true;
     const timer = setTimeout(async () => {
@@ -161,7 +162,6 @@ export default function EdukasiClientView({
           setTotalCount(res.total);
         }
       } catch {
-        // Handle gracefully
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -188,14 +188,13 @@ export default function EdukasiClientView({
 
   function handleTopicClick(topic: typeof TOPIC_CARDS[0]) {
     if (selectedTopic === topic.id) {
-      // Toggle off
       setSelectedTopic(null);
-      setActiveCategory("all");
+      setActiveCategory("stunting-gizi");
       setSearchQuery("");
     } else {
       setSelectedTopic(topic.id);
-      if (topic.category) setActiveCategory(topic.category);
-      if (topic.query) setSearchQuery(topic.query);
+      setActiveCategory("stunting-gizi");
+      setSearchQuery(topic.query || "");
     }
     setPage(1);
 
@@ -239,10 +238,11 @@ export default function EdukasiClientView({
     setCalcResult({ bmi, status, badgeStyle, advice });
   }
 
+  const isStuntingGizi = activeCategory === "stunting-gizi" || Boolean(selectedTopic);
+
   return (
     <div className="space-y-8">
-      {/* HEADER HERO SECTION */}
-      <div className="rounded-[28px] border border-[#d2dfec] bg-white p-6 sm:p-8 shadow-[0_12px_35px_rgba(44,115,185,0.04)] space-y-8">
+      <div className="rounded-[28px] border border-[#d2dfec] bg-white p-6 sm:p-8 shadow-[0_12px_35px_rgba(44,115,185,0.04)] space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
             <span className="inline-flex items-center gap-2 rounded-full border border-[#d2dfec] bg-[#f4f8fc] px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#2c73b9]">
@@ -256,96 +256,98 @@ export default function EdukasiClientView({
             </p>
           </div>
 
-          <button
-            onClick={() => setShowCalc(true)}
-            className="inline-flex items-center justify-center gap-2.5 rounded-full bg-[#2c73b9] px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#1e5a9a] shadow-md shadow-[#2c73b9]/15 flex-shrink-0"
-          >
-            <Calculator size={18} />
-            <span>Kalkulator Status Gizi Balita</span>
-          </button>
-        </div>
-
-        {/* 1. THREE STAT HIGHLIGHT CARDS IN 1 ROW */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-          {STAT_CARDS.map((stat, idx) => (
-            <div
-              key={idx}
-              className="rounded-2xl border border-[#d2dfec] bg-[#f4f8fc] p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[110px]"
+          {isStuntingGizi && (
+            <button
+              onClick={() => setShowCalc(true)}
+              className="inline-flex items-center justify-center gap-2.5 rounded-full bg-[#2c73b9] px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#1e5a9a] shadow-md shadow-[#2c73b9]/15 flex-shrink-0"
             >
-              {stat.isQr ? (
-                <div className="flex items-center justify-center py-0.5 text-[#2c73b9]">
-                  <div className="flex items-center justify-center rounded-xl bg-[#eef4fc] p-2 border border-[#c5d8f2]">
-                    <QrCode size={30} className="text-[#2c73b9]" />
-                  </div>
-                </div>
-              ) : (
-                <div className="text-3xl font-extrabold text-[#2c73b9] leading-none">
-                  {stat.value}
-                </div>
-              )}
-              <h4 className="mt-2 text-xs font-bold text-[#0f2d4a]">{stat.title}</h4>
-              <p className="mt-0.5 text-[11px] text-[#5a6e7f]">{stat.desc}</p>
-            </div>
-          ))}
+              <Calculator size={18} />
+              <span>Kalkulator Status Gizi Balita</span>
+            </button>
+          )}
         </div>
 
-        {/* 2. SIX TOPIC CARDS GRID (USING LUCIDE REACT ICONS FROM TECH STACK) */}
-        <div className="space-y-4 pt-2 border-t border-[#edf3f9]">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#718a9e] flex items-center gap-1.5">
-              <Sparkles size={14} className="text-[#2c73b9]" /> Topik Utama & Direktori Gizi:
-            </p>
-            {selectedTopic && (
-              <button
-                onClick={() => handleCategoryChange("all")}
-                className="text-xs text-[#2c73b9] font-bold hover:underline"
+        {isStuntingGizi && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            {STAT_CARDS.map((stat, idx) => (
+              <div
+                key={idx}
+                className="rounded-2xl border border-[#d2dfec] bg-[#f4f8fc] p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[110px]"
               >
-                Reset Filter Topik
-              </button>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {TOPIC_CARDS.map((topic) => {
-              const IconComponent = topic.icon;
-              const isSelected = selectedTopic === topic.id;
-              return (
-                <div
-                  key={topic.id}
-                  onClick={() => handleTopicClick(topic)}
-                  className={`group cursor-pointer rounded-2xl border p-5 transition-all duration-200 flex flex-col items-center text-center justify-between ${
-                    isSelected
-                      ? "border-[#2c73b9] bg-[#eef4fc] shadow-md ring-2 ring-[#2c73b9]/20"
-                      : "border-[#d2dfec] bg-white hover:border-[#2c73b9] hover:bg-[#f4f8fc] hover:-translate-y-0.5 shadow-sm"
-                  }`}
-                >
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={`mb-3 flex h-12 w-12 items-center justify-center rounded-2xl transition-transform group-hover:scale-110 ${
-                        isSelected
-                          ? "bg-[#2c73b9] text-white"
-                          : "bg-[#eef4fc] text-[#2c73b9] group-hover:bg-[#2c73b9] group-hover:text-white"
-                      }`}
-                    >
-                      <IconComponent size={24} />
+                {stat.isQr ? (
+                  <div className="flex items-center justify-center py-0.5 text-[#2c73b9]">
+                    <div className="flex items-center justify-center rounded-xl bg-[#eef4fc] p-2 border border-[#c5d8f2]">
+                      <QrCode size={30} className="text-[#2c73b9]" />
                     </div>
-                    <h4 className="text-xs font-bold text-[#0f2d4a] group-hover:text-[#2c73b9]">
-                      {topic.title}
-                    </h4>
-                    <p className="mt-1.5 text-[11px] text-[#5a6e7f] leading-snug">
-                      {topic.desc}
-                    </p>
                   </div>
-                </div>
-              );
-            })}
+                ) : (
+                  <div className="text-3xl font-extrabold text-[#2c73b9] leading-none">
+                    {stat.value}
+                  </div>
+                )}
+                <h4 className="mt-2 text-xs font-bold text-[#0f2d4a]">{stat.title}</h4>
+                <p className="mt-0.5 text-[11px] text-[#5a6e7f]">{stat.desc}</p>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
 
-        {/* 3. CATEGORY PILL TABS */}
-        <div className="pt-4 border-t border-[#edf3f9]">
+        {isStuntingGizi && (
+          <div className="space-y-4 pt-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#718a9e] flex items-center gap-1.5">
+                <Sparkles size={14} className="text-[#2c73b9]" /> PILIHAN TOPIK STUNTING & GIZI:
+              </p>
+              {selectedTopic && (
+                <button
+                  onClick={() => handleCategoryChange("all")}
+                  className="text-xs text-[#2c73b9] font-bold hover:underline"
+                >
+                  Reset Filter Topik
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {TOPIC_CARDS.map((topic) => {
+                const IconComponent = topic.icon;
+                return (
+                  <Link
+                    key={topic.id}
+                    href={`/edukasi/panduan/${topic.id}`}
+                    className="group cursor-pointer rounded-2xl border border-[#d2dfec] bg-white p-5 hover:border-[#2c73b9] hover:bg-[#f4f8fc] hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center text-center justify-between shadow-sm"
+                  >
+                    <div className="flex flex-col items-center">
+                      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef4fc] text-[#2c73b9] transition-transform group-hover:scale-110 group-hover:bg-[#2c73b9] group-hover:text-white">
+                        <IconComponent size={24} />
+                      </div>
+                      <h4 className="text-xs font-bold text-[#0f2d4a] group-hover:text-[#2c73b9]">
+                        {topic.title}
+                      </h4>
+                      <p className="mt-1.5 text-[11px] text-[#5a6e7f] leading-snug">
+                        {topic.desc}
+                      </p>
+                    </div>
+                    <div className="mt-4 w-full">
+                      <span className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#eef4fc] px-3.5 py-2 text-xs font-extrabold text-[#2c73b9] transition-all duration-200 group-hover:bg-[#2c73b9] group-hover:text-white group-hover:shadow-sm">
+                        Detail Panduan <ChevronRight size={14} />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div
+        id="artikel-grid-section"
+        className="rounded-[28px] border border-[#d2dfec] bg-white p-6 sm:p-8 shadow-[0_12px_35px_rgba(44,115,185,0.04)] space-y-6"
+      >
+        <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#718a9e] mb-3 flex items-center gap-1.5">
-            <Filter size={14} className="text-[#2c73b9]" /> Pilih Kategori Edukasi:
+            <Filter size={14} className="text-[#2c73b9]" /> PILIH KATEGORI EDUKASI:
           </p>
           <div className="flex flex-wrap items-center gap-2">
             {CATEGORIES.map((cat) => {
@@ -368,24 +370,13 @@ export default function EdukasiClientView({
             })}
           </div>
         </div>
-      </div>
 
-      {/* 4. SEARCH AND ARTICLES CONTAINER */}
-      <div
-        id="artikel-grid-section"
-        className="rounded-[28px] border border-[#d2dfec] bg-white p-6 sm:p-8 shadow-[0_12px_35px_rgba(44,115,185,0.04)]"
-      >
-        {/* Search Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-[#edf3f9]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
           <div>
             <h3 className="text-lg font-bold text-[#0f2d4a] flex items-center gap-2">
               Daftar Artikel & Panduan
               {loading && <Loader2 size={16} className="animate-spin text-[#2c73b9]" />}
             </h3>
-            <p className="text-xs text-[#5a6e7f] mt-0.5">
-              Menampilkan {totalCount} artikel dari server backend
-              {selectedTopic && " (Difilter berdasarkan topik terpilih)"}
-            </p>
           </div>
 
           <div className="relative w-full sm:w-80">
@@ -411,15 +402,14 @@ export default function EdukasiClientView({
           </div>
         </div>
 
-        {/* Dynamic Card List */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-16 text-[#2c73b9] space-y-3">
             <Loader2 size={32} className="animate-spin" />
-            <p className="text-xs font-semibold">Mengambil data dari API backend...</p>
+            <p className="text-xs font-semibold">Memuat data artikel...</p>
           </div>
         ) : items.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[#b8cde4] bg-[#f4f8fc] px-6 py-12 text-center text-sm text-[#5a6e7f]">
-            Belum ada artikel edukasi yang sesuai dengan pencarian/kategori dari server API.
+            Belum ada artikel edukasi yang sesuai dengan pencarian/kategori.
           </div>
         ) : (
           <>
@@ -435,12 +425,16 @@ export default function EdukasiClientView({
               total={totalCount}
               perPage={perPage}
               basePath="/edukasi"
+              onPageChange={(newPage) => {
+                setPage(newPage);
+                const el = document.getElementById("artikel-grid-section");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
             />
           </>
         )}
       </div>
 
-      {/* KALKULATOR MODAL STYLED ACCORDING TO KARANGPAPAK PORTAL */}
       {showCalc && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
@@ -449,7 +443,6 @@ export default function EdukasiClientView({
           }}
         >
           <div className="w-full max-w-lg rounded-[28px] border border-[#d2dfec] bg-white p-6 sm:p-8 shadow-2xl relative">
-            {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-[#edf3f9] pb-4 mb-5">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#eef4fc] text-[#2c73b9]">
@@ -474,7 +467,6 @@ export default function EdukasiClientView({
               </button>
             </div>
 
-            {/* Modal Form */}
             <form onSubmit={handleCalculate} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-[#0f2d4a] mb-1.5">
@@ -588,7 +580,6 @@ export default function EdukasiClientView({
                 </div>
               </div>
 
-              {/* ACTION BUTTONS WITH CLEAR / RESET BUTTON */}
               <div className="flex items-center gap-3 pt-2">
                 <button
                   type="submit"
@@ -609,7 +600,6 @@ export default function EdukasiClientView({
               </div>
             </form>
 
-            {/* RESULTS */}
             {calcResult && (
               <div className="mt-5 space-y-3 pt-3 border-t border-[#edf3f9]">
                 <div className={`rounded-2xl border p-4 ${calcResult.badgeStyle}`}>

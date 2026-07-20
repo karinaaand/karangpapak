@@ -22,7 +22,7 @@ Route::get('/umkm', [UMKMController::class, 'index']);
 Route::get('/umkm/{id}', [UMKMController::class, 'show']);
 Route::get('/edukasi', [EdukasiController::class, 'index']);
 Route::get('/edukasi/{category}', [EdukasiController::class, 'byCategory'])
-    ->whereIn('category', ['stunting-gizi', 'literasi-digital', 'lingkungan-sehat', 'kesiapsiagaan', 'keamanan']);
+    ->whereIn('category', ['stunting-gizi', 'kebun-edukasi', 'literasi-digital', 'lingkungan-sehat', 'kesiapsiagaan', 'keamanan']);
 Route::get('/kontak', [KontakController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {

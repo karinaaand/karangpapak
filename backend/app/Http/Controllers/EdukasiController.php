@@ -13,30 +13,25 @@ class EdukasiController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $page = $request->integer('page', 1);
         $perPage = (int) $request->integer('per_page', 6);
         $category = $request->query('category');
         $search = $request->query('search');
 
-        $cacheKey = "edukasi_index_p{$page}_pp{$perPage}_c{$category}_s{$search}";
+        $query = Edukasi::query()->where('is_published', true);
 
-        $data = Cache::remember($cacheKey, 3600, function () use ($perPage, $category, $search) {
-            $query = Edukasi::query()->where('is_published', true);
+        if ($category && $category !== 'all') {
+            $query->where('category', $category);
+        }
 
-            if ($category && $category !== 'all') {
-                $query->where('category', $category);
-            }
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('excerpt', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%");
+            });
+        }
 
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('title', 'like', "%{$search}%")
-                      ->orWhere('excerpt', 'like', "%{$search}%")
-                      ->orWhere('content', 'like', "%{$search}%");
-                });
-            }
-
-            return $query->latest()->paginate($perPage)->toArray();
-        });
+        $data = $query->latest()->paginate($perPage);
 
         return response()->json($data);
     }
@@ -124,7 +119,7 @@ class EdukasiController extends Controller
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', Rule::unique('edukasis', 'slug')->ignore($id)],
-            'category' => ['required', 'string', Rule::in(['stunting-gizi', 'literasi-digital', 'lingkungan-sehat', 'kesiapsiagaan', 'keamanan'])],
+            'category' => ['required', 'string', Rule::in(['stunting-gizi', 'kebun-edukasi', 'literasi-digital', 'lingkungan-sehat', 'kesiapsiagaan', 'keamanan'])],
             'excerpt' => ['nullable', 'string'],
             'content' => ['required', 'string'],
             'thumbnail' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],

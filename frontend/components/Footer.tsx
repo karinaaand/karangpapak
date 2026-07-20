@@ -51,10 +51,12 @@ export default function Footer({ profile }: { profile: Profile }) {
               {[
                 { href: "/",        label: "Beranda" },
                 { href: "/profile", label: "Profil Desa" },
+                { href: "/geografis", label: "Geografis (Peta GIS)" },
                 { href: "/layanan", label: "Layanan Warga" },
-                { href: "/berita",  label: "Kabar Desa" },
+                { href: "/berita",  label: "Kabar & Berita Desa" },
+                { href: "/galeri",  label: "Galeri Dokumentasi" },
                 { href: "/edukasi", label: "Edukasi Warga" },
-                { href: "/umkm",    label: "UMKM" },
+                { href: "/umkm",    label: "UMKM Lokal" },
                 { href: "/kontak",  label: "Hubungi Kami" },
               ].map((link) => (
                 <Link

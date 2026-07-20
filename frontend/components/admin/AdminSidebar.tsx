@@ -3,75 +3,88 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { getAllUsers } from "@/services/api";
 import {
-  LayoutDashboard,
-  MapPin,
-  Newspaper,
+  Home,
+  Building2,
+  Compass,
   ClipboardList,
-  Store,
+  Newspaper,
+  Image as ImageIcon,
   BookOpen,
+  Store,
   Phone,
+  Users,
   LogOut,
   Wheat,
-  Users,
 } from "lucide-react";
 
 const links = [
   {
     href: "/admin/dashboard" as const,
-    label: "Dashboard",
-    desc: "Ringkasan sistem",
-    Icon: LayoutDashboard,
+    label: "Beranda",
+    desc: "Tampilan & portal utama",
+    Icon: Home,
   },
   {
     href: "/admin/profile" as const,
     label: "Profil Desa",
-    desc: "Identitas & statistik desa",
-    Icon: MapPin,
+    desc: "Visi misi, Kades & sejarah",
+    Icon: Building2,
   },
   {
-    href: "/admin/berita" as const,
-    label: "Kabar Desa",
-    desc: "Berita & pengumuman",
-    Icon: Newspaper,
+    href: "/admin/geografis" as const,
+    label: "Geografis (Peta GIS)",
+    desc: "Lokasi & fasilitas desa",
+    Icon: Compass,
   },
   {
     href: "/admin/layanan" as const,
     label: "Layanan Warga",
-    desc: "Layanan administrasi desa",
+    desc: "Surat & administrasi desa",
     Icon: ClipboardList,
   },
   {
-    href: "/admin/umkm" as const,
-    label: "UMKM",
-    desc: "Promosi usaha lokal",
-    Icon: Store,
+    href: "/admin/berita" as const,
+    label: "Kabar & Berita Desa",
+    desc: "Pengumuman & artikel berita",
+    Icon: Newspaper,
+  },
+  {
+    href: "/admin/galeri" as const,
+    label: "Galeri Dokumentasi",
+    desc: "Foto kegiatan & album desa",
+    Icon: ImageIcon,
   },
   {
     href: "/admin/edukasi" as const,
     label: "Edukasi Warga",
-    desc: "Konten edukatif warga",
+    desc: "Panduan stunting, gizi & edukasi",
     Icon: BookOpen,
+  },
+  {
+    href: "/admin/umkm" as const,
+    label: "UMKM Lokal",
+    desc: "Katalog usaha & produk lokal",
+    Icon: Store,
   },
   {
     href: "/admin/kontak" as const,
     label: "Hubungi Kami",
-    desc: "Info & kontak kantor desa",
+    desc: "Kontak kantor & peta lokasi",
     Icon: Phone,
   },
   {
     href: "/admin/users" as const,
     label: "Pengelola Akun",
-    desc: "Manajemen admin",
+    desc: "Manajemen admin & operator",
     Icon: Users,
   },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const router   = useRouter();
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -84,16 +97,14 @@ export default function AdminSidebar() {
             const parsed = JSON.parse(stored);
             setUser(parsed);
             
-            // Sync with backend to ensure we have the latest avatar
             try {
               const users = await getAllUsers();
-              const latestUser = users.find(u => u.id === parsed.id);
+              const latestUser = users.find((u) => u.id === parsed.id);
               if (latestUser && latestUser.avatar !== parsed.avatar) {
                 setUser(latestUser);
                 localStorage.setItem("admin_user", JSON.stringify(latestUser));
               }
-            } catch (err) {
-              // Ignore network errors here
+            } catch {
             }
           } catch {}
         }
@@ -122,21 +133,21 @@ export default function AdminSidebar() {
           </div>
           <div className="hidden md:block">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#93c5fd]">
-              Panel Admin
+              Pengaturan Web Publik
             </p>
             <h1 className="text-base font-extrabold text-white leading-tight">
-              Karangpapak
+              Desa Karangpapak
             </h1>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-0.5 px-2 md:px-3 py-5 overflow-y-auto">
-        <p className="px-3 mb-3 text-[10px] font-bold uppercase tracking-widest text-[#64748b] hidden md:block">
-          Menu Utama
+      <nav className="flex-1 space-y-1 px-2 md:px-3 py-4 overflow-y-auto">
+        <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-[#64748b] hidden md:block">
+          Menu Pengelolaan Web Publik
         </p>
         {links.map(({ href, label, desc, Icon }) => {
-          const active = pathname === href || pathname.startsWith(href + "/");
+          const active = pathname === href || (href !== "/admin/dashboard" && pathname.startsWith(href));
           return (
             <Link
               key={href}
@@ -152,10 +163,10 @@ export default function AdminSidebar() {
                 className={`flex-shrink-0 ${active ? "text-white" : "text-[#94a3b8] group-hover:text-white"}`}
               />
               <div className="min-w-0 hidden md:block">
-                <p className={`text-sm font-semibold leading-tight truncate ${active ? "text-white" : ""}`}>
+                <p className={`text-xs font-bold leading-tight truncate ${active ? "text-white" : ""}`}>
                   {label}
                 </p>
-                <p className={`text-[11px] leading-tight mt-0.5 truncate ${
+                <p className={`text-[10px] leading-tight mt-0.5 truncate ${
                   active ? "text-[#93c5fd]" : "text-[#64748b] group-hover:text-[#94a3b8]"
                 }`}>
                   {desc}
@@ -166,9 +177,9 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      <div className="p-3 md:p-4 pb-6 md:pb-8 mt-auto">
+      <div className="p-3 md:p-4 pb-6 md:pb-8 mt-auto border-t border-white/5">
         <div className="flex items-center gap-3 w-full rounded-xl p-2 transition-all hover:bg-white/5">
-          <div className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#e85d04] text-sm font-bold text-white border-2 border-white/10">
+          <div className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#2c73b9] text-xs font-bold text-white border-2 border-white/10">
             {user?.avatar ? (
               <img 
                 src={`${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ?? "http://127.0.0.1:8000"}/storage/${user.avatar}`} 
@@ -179,16 +190,16 @@ export default function AdminSidebar() {
               <span>
                 {user?.name
                   ? user.name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase()
-                  : "SA"}
+                  : "OP"}
               </span>
             )}
           </div>
           <div className="flex-1 min-w-0 hidden md:block text-left">
-            <p className="text-sm font-semibold text-white truncate">
-              {user?.name || "Super Administrator"}
+            <p className="text-xs font-bold text-white truncate">
+              {user?.name || "Operator Desa"}
             </p>
             <p className="text-[10px] text-[#94a3b8] truncate">
-              {user?.email || "superadmin@example.com"}
+              {user?.email || "operator@karangpapak.desa.id"}
             </p>
           </div>
           <button
@@ -218,7 +229,7 @@ export default function AdminSidebar() {
             </div>
             <h3 className="text-lg font-bold text-white mb-2">Konfirmasi Keluar</h3>
             <p className="text-sm text-[#94a3b8] mb-6 px-2">
-              Apakah Anda yakin ingin keluar dari panel admin Karangpapak? Anda harus login kembali untuk masuk.
+              Apakah Anda yakin ingin keluar dari panel pengelola Karangpapak? Anda harus login kembali untuk masuk.
             </p>
             <div className="flex gap-3">
               <button

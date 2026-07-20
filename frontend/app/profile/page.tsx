@@ -1,4 +1,4 @@
-import { BadgeCheck, Building2, Sparkles, Compass, Target, BookOpen, User, Award, MapPin, Mail, Map } from "lucide-react";
+import { BadgeCheck, Building2, Sparkles, Compass, Target, BookOpen, User, MapPin, Mail, Map, ArrowRight } from "lucide-react";
 
 import StatCard from "@/components/StatCard";
 import { getProfile } from "@/services/api";
@@ -77,25 +77,75 @@ export default async function ProfilePage() {
       </section>
 
       <section className="px-4 py-4 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2">
-          <div className="rounded-[24px] border border-[#d2dfec] bg-[linear-gradient(135deg,#ffffff_0%,#f4f8fc_100%)] p-5 shadow-[0_10px_30px_rgba(44,115,185,0.03)] transition-all hover:-translate-y-1 hover:border-[#a8c3e0] hover:shadow-[0_14px_35px_rgba(44,115,185,0.06)]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eef4fc] text-[#2c73b9] mb-3">
-              <Compass size={20} />
+        <div className="mx-auto max-w-6xl grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <a
+            href="/geografis"
+            className="group rounded-2xl border border-[#d2dfec] bg-white p-5 shadow-sm hover:border-[#2c73b9] hover:shadow-md transition-all flex items-center justify-between"
+          >
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#eef4fc] text-[#2c73b9] group-hover:bg-[#2c73b9] group-hover:text-white transition-colors">
+                <MapPin size={22} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-sm font-extrabold text-[#0f2d4a] group-hover:text-[#2c73b9] transition-colors truncate">
+                  Geografis & Peta GIS Desa
+                </h4>
+                <p className="text-xs text-[#5a6e7f] mt-0.5 line-clamp-1">
+                  Peta digital wilayah, batas administratif, & titik sarana publik
+                </p>
+              </div>
             </div>
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2c73b9]">Visi Desa</h3>
-            <div className="mt-2 max-h-[120px] overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#cbd5e1] [&::-webkit-scrollbar-track]:bg-transparent">
+            <span className="shrink-0 pl-4 text-xs font-extrabold text-[#2c73b9] whitespace-nowrap flex items-center gap-1.5">
+              <span>Lihat Peta</span>
+              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+            </span>
+          </a>
+
+          <a
+            href="/layanan"
+            className="group rounded-2xl border border-[#d2dfec] bg-white p-5 shadow-sm hover:border-[#2c73b9] hover:shadow-md transition-all flex items-center justify-between"
+          >
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#eef4fc] text-[#2c73b9] group-hover:bg-[#2c73b9] group-hover:text-white transition-colors">
+                <Building2 size={22} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-sm font-extrabold text-[#0f2d4a] group-hover:text-[#2c73b9] transition-colors truncate">
+                  Layanan Warga Desa
+                </h4>
+                <p className="text-xs text-[#5a6e7f] mt-0.5 line-clamp-1">
+                  Panduan persyaratan administrasi & pelayanan surat kependudukan
+                </p>
+              </div>
+            </div>
+            <span className="shrink-0 pl-4 text-xs font-extrabold text-[#2c73b9] whitespace-nowrap flex items-center gap-1.5">
+              <span>Buka Layanan</span>
+              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+            </span>
+          </a>
+        </div>
+      </section>
+
+      <section className="px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2">
+          <div className="rounded-[24px] border border-[#d2dfec] bg-[linear-gradient(135deg,#ffffff_0%,#f4f8fc_100%)] p-6 shadow-[0_10px_30px_rgba(44,115,185,0.03)] transition-all hover:-translate-y-1 hover:border-[#a8c3e0] hover:shadow-[0_14px_35px_rgba(44,115,185,0.06)] flex flex-col items-center text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef4fc] text-[#2c73b9] mb-3 shadow-sm">
+              <Compass size={24} />
+            </div>
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#2c73b9]">Visi Desa</h3>
+            <div className="mt-2.5 max-h-[140px] overflow-y-auto px-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#cbd5e1] [&::-webkit-scrollbar-track]:bg-transparent w-full">
               <p className="text-xs leading-6 text-[#475569] font-medium italic">
                 &ldquo;{profile.vision ?? "Visi desa akan ditampilkan di sini setelah diperbarui melalui dashboard admin."}&rdquo;
               </p>
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-[#d2dfec] bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_100%)] p-5 shadow-[0_10px_30px_rgba(44,115,185,0.03)] transition-all hover:-translate-y-1 hover:border-[#a8c3e0] hover:shadow-[0_14px_35px_rgba(44,115,185,0.06)]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eef4fc] text-[#2c73b9] mb-3">
-              <Target size={20} />
+          <div className="rounded-[24px] border border-[#d2dfec] bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_100%)] p-6 shadow-[0_10px_30px_rgba(44,115,185,0.03)] transition-all hover:-translate-y-1 hover:border-[#a8c3e0] hover:shadow-[0_14px_35px_rgba(44,115,185,0.06)] flex flex-col items-center text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef4fc] text-[#2c73b9] mb-3 shadow-sm">
+              <Target size={24} />
             </div>
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2c73b9]">Misi Desa</h3>
-            <div className="mt-2 max-h-[120px] overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#cbd5e1] [&::-webkit-scrollbar-track]:bg-transparent">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#2c73b9]">Misi Desa</h3>
+            <div className="mt-2.5 max-h-[140px] overflow-y-auto px-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#cbd5e1] [&::-webkit-scrollbar-track]:bg-transparent w-full">
               <p className="text-xs leading-6 text-[#475569] whitespace-pre-line">
                 {profile.mission ?? "Misi desa akan ditampilkan di sini setelah diperbarui melalui dashboard admin."}
               </p>
@@ -103,8 +153,6 @@ export default async function ProfilePage() {
           </div>
         </div>
       </section>
-
-
 
       <section className="px-4 py-6 pb-16 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 items-stretch">
