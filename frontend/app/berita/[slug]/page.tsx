@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 import { getBeritaDetail } from "@/services/api";
 
@@ -10,6 +11,10 @@ type DetailProps = {
 export default async function BeritaDetailPage({ params }: DetailProps) {
   const { slug } = await params;
   const berita = await getBeritaDetail(slug);
+
+  if (!berita || !berita.title) {
+    notFound();
+  }
 
   return (
     <div className="bg-[linear-gradient(180deg,#f4f8fc_0%,#eef4fc_45%,#ffffff_100%)] min-h-screen">

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Phone, UserRound } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { getUmkmDetail } from "@/services/api";
@@ -13,6 +14,11 @@ const defaultMap = "https://www.google.com/maps?q=-6.95781568282219,106.47659387
 export default async function UmkmDetailPage({ params }: DetailProps) {
   const { id } = await params;
   const umkm = await getUmkmDetail(id);
+
+  if (!umkm || !umkm.name) {
+    notFound();
+  }
+
   const mapSrc = umkm.maps_embed ?? defaultMap;
 
   return (

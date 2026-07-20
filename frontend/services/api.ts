@@ -7,6 +7,7 @@ export type { Edukasi, Berita, Umkm };
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api",
+  timeout: 5000,
   headers: {
     Accept: "application/json",
   },
@@ -482,64 +483,65 @@ export async function getProfile() {
 
   try {
     const { data } = await api.get<Profile>("/profile");
-    return { ...defaultProfile, ...data, ...(storedCustom || {}) };
-  } catch {
-    return { id: 1, hero_image: null, hero_image_url: null, ...defaultProfile, ...(storedCustom || {}) } satisfies Profile;
-  }
+    if (data && typeof data === "object" && data.village_name) {
+      return { ...defaultProfile, ...data, ...(storedCustom || {}) };
+    }
+  } catch {}
+  return { id: 1, hero_image: null, hero_image_url: null, ...defaultProfile, ...(storedCustom || {}) } satisfies Profile;
 }
 
 export async function getLayanan(page = 1, perPage = 6) {
   try {
     const { data } = await api.get<PaginatedResponse<Layanan>>(`/layanan?page=${page}&per_page=${perPage}`);
-    return data.total > 0 ? data : paginate([...defaultLayanan], page, perPage);
-  } catch {
-    return paginate([...defaultLayanan], page, perPage);
-  }
+    if (data && Array.isArray(data.data) && typeof data.total === "number") {
+      return data.total > 0 ? data : paginate([...defaultLayanan], page, perPage);
+    }
+  } catch {}
+  return paginate([...defaultLayanan], page, perPage);
 }
 
 export async function getLayananDetail(id: string) {
   try {
     const { data } = await api.get<Layanan>(`/layanan/${id}`);
-    return data;
-  } catch {
-    return defaultLayanan.find((item) => item.slug === id) ?? defaultLayanan[0];
-  }
+    if (data && (data.title || data.id)) return data;
+  } catch {}
+  return defaultLayanan.find((item) => item.slug === id || String(item.id) === id) ?? defaultLayanan[0];
 }
 
 export async function getBerita(page = 1, perPage = 6) {
   try {
     const { data } = await api.get<PaginatedResponse<Berita>>(`/berita?page=${page}&per_page=${perPage}`);
-    return data.total > 0 ? data : paginate([...defaultBerita], page, perPage);
-  } catch {
-    return paginate([...defaultBerita], page, perPage);
-  }
+    if (data && Array.isArray(data.data) && typeof data.total === "number") {
+      return data.total > 0 ? data : paginate([...defaultBerita], page, perPage);
+    }
+  } catch {}
+  return paginate([...defaultBerita], page, perPage);
 }
 
 export async function getBeritaDetail(slug: string) {
   try {
     const { data } = await api.get<Berita>(`/berita/${slug}`);
-    return data;
-  } catch {
-    return defaultBerita.find((item) => item.slug === slug) ?? defaultBerita[0];
-  }
+    if (data && (data.title || data.id)) return data;
+  } catch {}
+  return defaultBerita.find((item) => item.slug === slug || String(item.id) === slug) ?? defaultBerita[0];
 }
 
 export async function getUmkm(page = 1, perPage = 6) {
   try {
     const { data } = await api.get<PaginatedResponse<Umkm>>(`/umkm?page=${page}&per_page=${perPage}`);
-    return data.total > 0 ? data : paginate([...defaultUmkm], page, perPage);
-  } catch {
-    return paginate([...defaultUmkm], page, perPage);
-  }
+    if (data && Array.isArray(data.data) && typeof data.total === "number") {
+      return data.total > 0 ? data : paginate([...defaultUmkm], page, perPage);
+    }
+  } catch {}
+  return paginate([...defaultUmkm], page, perPage);
 }
 
 export async function getUmkmDetail(id: string) {
   try {
     const { data } = await api.get<Umkm>(`/umkm/${id}`);
-    return data;
-  } catch {
-    return defaultUmkm.find((item) => item.slug === id) ?? defaultUmkm[0];
-  }
+    if (data && (data.name || data.id)) return data;
+  } catch {}
+  return defaultUmkm.find((item) => item.slug === id || String(item.id) === id) ?? defaultUmkm[0];
 }
 
 export async function getEdukasi(page = 1, perPage = 6, category?: string, search?: string) {
@@ -552,9 +554,8 @@ export async function getEdukasi(page = 1, perPage = 6, category?: string, searc
       url += `&search=${encodeURIComponent(search)}`;
     }
     const { data } = await api.get<PaginatedResponse<Edukasi>>(url);
-    if (data && typeof data.total === "number") return data;
-  } catch {
-  }
+    if (data && Array.isArray(data.data) && typeof data.total === "number") return data;
+  } catch {}
 
   let items = [...defaultEdukasi];
   if (category && category !== "all") {
@@ -580,10 +581,11 @@ export async function getEdukasiByCategory(category: string, page = 1, perPage =
 export async function getEdukasiDetail(slug: string) {
   try {
     const { data } = await api.get<PaginatedResponse<Edukasi>>(`/edukasi?per_page=100`);
-    const found = data.data.find((item) => item.slug === slug);
-    if (found) return found;
-  } catch {
-  }
+    if (data && Array.isArray(data.data)) {
+      const found = data.data.find((item) => item.slug === slug);
+      if (found) return found;
+    }
+  } catch {}
   return defaultEdukasi.find((item) => item.slug === slug) ?? defaultEdukasi[0];
 }
 
@@ -598,10 +600,11 @@ export async function getKontak() {
 
   try {
     const { data } = await api.get<Kontak>("/kontak");
-    return { ...defaultKontak, ...data, id: data.id ?? 1, ...(storedCustom || {}) };
-  } catch {
-    return { id: 1, ...defaultKontak, ...(storedCustom || {}) } satisfies Kontak;
-  }
+    if (data && typeof data === "object" && (data.office_name || data.address)) {
+      return { ...defaultKontak, ...data, id: data.id ?? 1, ...(storedCustom || {}) };
+    }
+  } catch {}
+  return { id: 1, ...defaultKontak, ...(storedCustom || {}) } satisfies Kontak;
 }
 
 export async function getAllLayanan(page = 1, perPage = 20) {
